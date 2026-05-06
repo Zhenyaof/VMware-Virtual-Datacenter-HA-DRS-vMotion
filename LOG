@@ -1,0 +1,114 @@
+# VMware Virtual Datacenter - Troubleshooting Logs
+
+Project: VMware Virtual Datacenter Implementation  
+Domain: amir.fakerov  
+Network: 192.168.4.0/24  
+
+---
+
+## Log 1: vCenter Service Failure (503 Error)
+
+### Timestamp
+2026-05-06 10:15:32
+
+### Issue
+vCenter Server UI not accessible (HTTP 503 Service Unavailable)
+
+### Observed Symptoms
+- Web client not responding
+- ESXi hosts still reachable via direct client
+- vCenter services not loading
+
+### Root Cause Analysis
+vCenter services were not fully initialized after reboot.
+
+### Resolution Steps
+- Connected via SSH to VCSA
+- Checked service status
+- Restarted all services
+
+### Result
+vCenter UI restored successfully at 10:22
+
+---
+
+## Log 2: iSCSI Datastore Not Visible
+
+### Timestamp
+2026-05-06 11:05:10
+
+### Issue
+Shared datastore not visible on ESXi Host 2 (192.168.4.20)
+
+### Observed Symptoms
+- Datastore missing in storage view
+- VM migration failed
+- Path to LUN unavailable
+
+### Root Cause Analysis
+Storage adapter not rescanned after network configuration change.
+
+### Resolution Steps
+- Performed rescan of storage adapters
+- Verified connectivity to storage network
+- Re-registered iSCSI target
+
+### Result
+Datastore successfully mounted on both ESXi hosts
+
+---
+
+## Log 3: VM Network Isolation Issue
+
+### Timestamp
+2026-05-06 12:30:44
+
+### Issue
+VM02 unable to communicate with other VMs
+
+### Observed Symptoms
+- Ping failure between VM02 and VM03
+- No external connectivity issues
+
+### Root Cause Analysis
+Incorrect port group assignment in virtual switch configuration
+
+### Resolution Steps
+- Verified port group settings in vSphere
+- Reassigned VM NIC to correct network
+- Restarted network interface
+
+### Result
+Network connectivity restored
+
+---
+
+## Log 4: vMotion Migration Test
+
+### Timestamp
+2026-05-06 13:15:00
+
+### Action
+Live migration of VM01 from ESXi-01 to ESXi-02
+
+### Result
+- Migration completed successfully
+- No downtime observed
+- CPU and memory state preserved
+
+---
+
+## Log 5: HA Failover Test
+
+### Timestamp
+2026-05-06 14:00:00
+
+### Action
+Simulated ESXi Host failure (192.168.4.10 shutdown)
+
+### Result
+- HA triggered successfully
+- VM01 restarted on ESXi-02
+- Recovery time: ~2-3 minutes
+
+---
